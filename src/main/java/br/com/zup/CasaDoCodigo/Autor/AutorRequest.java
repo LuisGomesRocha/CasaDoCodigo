@@ -1,19 +1,20 @@
 package br.com.zup.CasaDoCodigo.Autor;
 
-import javax.persistence.Column;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
+import br.com.zup.CasaDoCodigo.Validator.VerificaCampoDuplicado;
+
 import java.util.Locale;
 
 public class AutorRequest {
 
 
     @NotBlank
-
     private String nome;
     @NotBlank @Email
-    @Column (unique = true) 
+    @VerificaCampoDuplicado(attribute = "email", clazz = Autor.class)
     private String email;
     @NotBlank @Size(max = 400)
     private String descricao;
