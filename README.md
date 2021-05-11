@@ -169,6 +169,42 @@ public @interface VerificaCampoDuplicado {
 
 ```
 
+<h2 align="center">
+    VerificaCampoDuplicadoValidator
+</h2>
+
+```
+public class VerificaCampoDuplicadoValidator
+        implements ConstraintValidator<VerificaCampoDuplicado,Object> {
+
+    private String campo;
+    private Class<?> clazz;
+
+    @PersistenceContext
+    private EntityManager manager;
+
+    @Override
+    public void initialize(VerificaCampoDuplicado parameters) {
+
+        this.campo = parameters.attribute();
+        this.clazz = parameters.clazz();
+    }
+
+    @Override
+    public boolean isValid(Object objetoValidacao, ConstraintValidatorContext context) {
+
+        Query query = manager.createQuery("SELECT 1 FROM "+ clazz.getName() + " where " + campo + " =:valor");
+        query.setParameter("valor", objetoValidacao);
+
+        var resultList = query.getResultList();
+
+        return resultList.size() > 0 ? false: true;
+
+    }
+}
+
+```
+
 <h1 align="center">
     <a href="https://github.com/LuisGomesRocha/CasaDoCodigo/releases/tag/V2">🔗 Cadastro de uma categoria </a>
 </h1>
@@ -314,4 +350,245 @@ public class VerificaCampoDuplicadoValidator
     }
 }
 ```
+
+<h1 align="center">
+    <a href="https://github.com/zup-academy/nosso-cartao-documentacao/blob/master/orange-talent-3/treino-casa-do-codigo/0-0-5-criar-um-novo-livro.md">🔗 Livro - Criar, listar e detalhe... </a>
+</h1>
+
+
+<p align="center">🚀Olá Zupper, este questionário é uma forma de entender o raciocínio que você pretende utilizar para desenvolver a funcionalidade "Cadastro de um novo livro" , funcionalidade "Exibir lista livros"  e "Exibir lista livros" da casa do código. 🚀 </p>
+
+### Necessidades
+- [x] Um título
+- [x] Um resumo do que vai ser encontrado no livro
+- [x] Um sumário de tamanho livre. O texto deve entrar no formato markdown, que é uma string. Dessa forma ele pode ser formatado depois da maneira apropriada.
+- [x] Preço do livro
+- [x] Número de páginas
+- [x] Isbn(identificador do livro)
+- [x] Data que ele deve entrar no ar(de publicação)
+- [x] Um livro pertence a uma categoria
+- [x] Um livro é de um autor
+- [x] Para que seja fácil pegar um id do livro, vamos exibir a lista de livros cadastrados
+- [x] Ter um endpoint que em função de um id de livro retorne os detalhes necessários para montar a página
+
+### Restrições
+- [x] Título é obrigatório
+- [x] Título é único
+- [x] Resumo é obrigatório e tem no máximo 500 caracteres
+- [x] Sumário é de tamanho livre.
+- [x] Preço é obrigatório e o mínimo é de 20
+- [x] Número de páginas é obrigatória e o mínimo é de 100
+- [x] Isbn é obrigatório, formato livre
+- [x] Isbn é único
+- [x] Data que vai entrar no ar precisa ser no futuro
+- [x] A categoria não pode ser nula
+- [x] O autor não pode ser nulo
+- [x] Se o id não existir é para retornar 404
+
+	
+<p align="justify"> :robot: Para cadastrar um novo livro no sistema será criado a classe Lutor, anotado com @Entity que informar que uma classe também é uma entidade, a partir disso, a JPA estabelecerá a ligação entre a entidade e uma tabela de mesmo nome no banco de dados, onde os dados de objetos desse tipo poderão ser persistidos. Os dados existentes nessa classe será Id, titulo, subTitulo, resumo, sumario, preco, paginas, isbn e dataPublicacao. A classe livro terá um modelo relacional (uma associação muitos-para-um (N:1) é quando temos várias tuplas de uma tabela referenciando uma tupla de uma tabela qualquer), @ManyToOne com as classes Categoria e Autor.:robot: </p>
+
+<p align="justify"> :robot: Teremos também a interface  LivroRepository que vai receber os métodos da classe JpaRepository, bem como a classe LivroController que vai ter os métodos de salvar elistar os livros cadastrados. Por fim na classe LivroRequest e LivroResponse, irá ocorrer a conversão do objeto relacionando com classe Autor e Categoria, bem como limitando as informações e retorno após a requisição do "endpoint" dos dados cadastrados. :robot: </p>
+
+
+<h2 align="center">
+    Livro
+</h2>
+
+```
+
+@Entity
+public class Livro {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(nullable = false, unique = true)
+    private String titulo;
+    @Column(nullable = false)
+    private String subTitulo;
+    @Column(nullable = false, length = 500)
+    private String resumo;
+    @Column(columnDefinition = "text null")
+    private String sumario;
+    @Column(nullable = false)
+    private BigDecimal preco;
+    @Column(nullable = false)
+    private Integer paginas;
+    @Column(nullable = false, unique = true)
+    private String isbn;
+    private LocalDate dataPublicacao;
+    @ManyToOne
+    private Categoria categoria;
+    @ManyToOne
+    private Autor autor;
+
+```
+
+
+<h2 align="center">
+    LivroRequest
+</h2>
+
+```
+
+public class LivroRequest {
+
+    @NotBlank
+    @VerificaCampoDuplicado(attribute = "titulo", clazz = Livro.class)
+    private String titulo;
+
+    @NotBlank
+    private String subTitulo;
+
+    @NotBlank @Size(max = 500)
+    private String resumo;
+
+    private String sumario;
+
+    @DecimalMin("20.0")
+    private BigDecimal preco;
+
+    @Min(100)
+    private Integer nPaginas;
+
+    @NotBlank
+    @VerificaCampoDuplicado(attribute = "isbn",clazz = Livro.class)
+    private String isbn;
+
+    @Future @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING)
+    private LocalDate dataPublicacao;
+
+    @Valid
+    @NotNull //Classe Categoria
+    @ConvertGroup(from = Default.class, to = Groups.Categoria.class)
+    private Categoria categoria;
+
+    @Valid
+    @NotNull
+    @ConvertGroup(from = Default.class, to = Groups.Autor.class)
+    private Autor autor;
+
+                              .
+                              .
+                              .
+
+    public Livro toLivro(Categoria categoria, Autor autor){
+
+        return new Livro(this.titulo,this.subTitulo, this.resumo,this.sumario,this.preco,this.nPaginas,
+                    this.isbn,this.dataPublicacao,categoria,autor);
+
+    }
+}
+```
+
+
+<h2 align="center">
+    LivroController
+</h2>
+
+```
+
+@RestController
+@RequestMapping("/livros")
+public class LivroController {
+
+    private LivroRepository repository;
+    private CategoriaRepository categoriaRepository;
+    private AutorRepository autorRepository;
+
+    public LivroController(LivroRepository repository,
+                           CategoriaRepository categoriaRepository,
+                           AutorRepository autorRepository) {
+
+        this.repository = repository;
+        this.categoriaRepository = categoriaRepository;
+        this.autorRepository = autorRepository;
+
+    }
+
+    @PostMapping
+    public ResponseEntity<?> salvarLivro(@RequestBody @Valid LivroRequest livroRequest)  {
+
+        //verificar a categoria
+        Optional<Categoria> categoria = categoriaRepository.findById(livroRequest.getCategoria().getId());
+        Optional<Autor> autor = autorRepository.findById(livroRequest.getAutor().getId());
+        if(categoria.isPresent() && autor.isPresent()){
+            return ResponseEntity.ok(repository.save(livroRequest.toLivro(categoria.get(),autor.get())));
+        }
+
+        throw new CategoriaOuAutorNaoEncontrado("Id da Categoria ou do Autor nao encontrado!");
+
+    }
+
+    @GetMapping
+    public List<LivroResponse> listarTodos(){
+        LivroResponse livroResponse = new LivroResponse();
+        return livroResponse.toLivroResponse(repository.findAll());
+    }
+
+}
+```
+
+<h2 align="center">
+    LivroRepository
+</h2>
+
+```
+public interface LivroRepository extends JpaRepository<Livro, Long> {
+}
+
+```
+
+<h2 align="center">
+    LivroResponse
+</h2>
+
+```
+public class LivroResponse {
+    private Long id;
+    private String nome;
+
+    public LivroResponse() {
+    }
+
+    public LivroResponse(Long id, String nome) {
+        this.id = id;
+        this.nome = nome;
+    }
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public List<LivroResponse> toLivroResponse(List<Livro> livros) {
+
+        List<LivroResponse> livroResponses = livros.stream()
+                .map(e->new LivroResponse(e.getId(),e.getTitulo()))
+                .collect(Collectors.toList());
+        return livroResponses;
+
+    }
+}
+
+```
+
+<h1 align="center">
+    <a href="https://github.com/zup-academy/nosso-cartao-documentacao/blob/master/orange-talent-3/treino-casa-do-codigo/0-0-8-cadastro-de-pais-e-estados-do-pais.md">🔗 Livro - Precisamos de um cadastro simples de países e seus respectivos estados.... </a>
+</h1>
+
+
+<p align="center">🚀Olá Zupper, este questionário é uma forma de entender o raciocínio que você pretende utilizar para desenvolver a funcionalidade "Cadastro de país e estados" da casa do código.  🚀 </p>
+
+### Necessidades
+- [x] O nome é obrigatório
+
+### Restrições
+- [x] O nome é único
+- [x] o nome é único para o mesmo país (Estados)
+- [x] o país é obrigatório (Estados)
+
 
