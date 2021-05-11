@@ -2,7 +2,7 @@
 Nessa tarefa precisamos criar um projeto para atender as funcionalidades da Casa do código, para tal, temos alguns pré requisitos de linguagem de programação e tecnologia, pois precisamos que esse projeto seja evoluído e mantido por anos, portanto é extremamente importante a escolha das mesmas.
 
 <h1 align="center">
-    <a href="https://www.java.com/pt-BR/">🔗 Casa do Código </a>
+    <a href="https://github.com/zup-academy/nosso-cartao-documentacao/tree/master/orange-talent-3/treino-casa-do-codigo">🔗 Casa do Código </a>
 </h1>
 <p align="center">🚀 Formulário de ideia | Implementação Cadastro Novo Autor - Olá Zupper, este questionário é uma forma de entender o raciocínio que você pretende utilizar para desenvolver a funcionalidade "Cadastro Novo Autor" da casa do código. 
 Você deve dissertar sobre como você resolveria a funcionalidade em questão antes de começar a implementar. 🚀 </p>
@@ -132,7 +132,7 @@ public class AutorRequest {
 
 
 <h1 align="center">
-    <a href="https://www.java.com/pt-BR/">🔗 Necessidades de anotação personalizada... </a>
+    <a href="https://github.com/LuisGomesRocha/CasaDoCodigo/releases/tag/Necessidades">🔗 Necessidades de anotação personalizada... </a>
 </h1>
 
 
