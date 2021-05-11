@@ -147,8 +147,6 @@ public class AutorRequest {
 <p align="justify"> :robot:  Desta forma para criar a anotação que garante que o e-mail do autor seja único no sistema, vamos iniciar criando uma classe interface (pode ser entendida como um tipo especial de classe abstrata, onde contém apenas atributos especiais (static e final) e todos os seus métodos são implicitamente abstract e public e não possuem corpo), chamada de VerificaCampoDuplicado. Essa classe vai possuir as anotações de @Retention @Target e @Constraint.
 A anotação Retention definirá até quando nossa anotação estará disponível, sendo que precisamos que ela seja executada quando o usuário enviar os seus dados, e isso acontece quando nossa aplicação está rodando, logo precisamos dela em tempo de execução, Runtime. Em seguida a notação Target definirá quais dos elementos que podem ser anotados com essa anotação.:robot: </p>
 
-<p align="justify"> :robot: Por fim a classe VerificaCampoDuplicadoValidator irá implementar uma query que irá buscar o valor no bando de dados para que seja comparado ao email de entada retornado a presença ou não do email pesquisado no banco de dados. Uma vez a notação criada a mesma será implementada na classe AutorRequest @VerificaCampoDuplicado(attribute = "email", clazz = Autor.class). :robot: </p>
-
 
 <h2 align="center">
     VerificaCampoDuplicado
@@ -169,41 +167,6 @@ public @interface VerificaCampoDuplicado {
 
 }
 
-```
-
-<h2 align="center">
-    VerificaCampoDuplicadoValidator
-</h2>
-
-```
-public class VerificaCampoDuplicadoValidator
-        implements ConstraintValidator<VerificaCampoDuplicado,Object> {
-
-    private String campo;
-    private Class<?> clazz;
-
-    @PersistenceContext
-    private EntityManager manager;
-
-    @Override
-    public void initialize(VerificaCampoDuplicado parameters) {
-
-        this.campo = parameters.attribute();
-        this.clazz = parameters.clazz();
-    }
-
-    @Override
-    public boolean isValid(Object objetoValidacao, ConstraintValidatorContext context) {
-
-        Query query = manager.createQuery("SELECT 1 FROM "+ clazz.getName() + " where " + campo + " =:valor");
-        query.setParameter("valor", objetoValidacao);
-
-        var resultList = query.getResultList();
-
-        return resultList.size() > 0 ? false: true;
-
-    }
-}
 ```
 
 <h1 align="center">
@@ -284,3 +247,71 @@ public class ErrosHandle {
 
 }
 ```
+
+<h1 align="center">
+    <a href="https://github.com/zup-academy/nosso-cartao-documentacao/blob/master/orange-talent-3/treino-casa-do-codigo/0-0-4.1-criacao-validador-generico.md">🔗 Criação validador genérico... </a>
+</h1>
+
+
+<p align="center">🚀Tanto para o cadastro do autor quanto para o cadastro da categoria, foi necessário realizar uma validação de valor único no sistema. Neste caso, só muda um detalhe da query que estamos executando para fazer a verificação. E agora, será que você consegue criar seu validador customizado para reutilizá-lo nas validações de email de autor e nome de categoria? 🚀 </p>
+
+### Features
+
+- [x] Criar um validador genérico para autor e categoria
+
+<p align="justify"> :robot: A classe VerificaCampoDuplicadoValidator irá implementar uma query que irá buscar o valor no bando de dados para que seja comparado ao email de entada retornado a presença ou não do email pesquisado no banco de dados. Uma vez a notação criada a mesma será implementada na classe AutorRequest @VerificaCampoDuplicado(attribute = "email", clazz = Autor.class). A mesma lógica pode ser utilizada no cadastro de categoria.:robot: </p>
+
+
+<h2 align="center">
+    Exemplo de aplicação: AutorRequest e CategoriaRequest:
+</h2>
+
+```	
+	Ex.:   
+	@VerificaCampoDuplicado(attribute = "nome",clazz = Categoria.class)
+	private String nome;
+	
+	      OU
+	@NotBlank @Email
+	@VerificaCampoDuplicado(attribute = "email", clazz = Autor.class)
+	private String email;   
+	
+```
+
+
+
+<h2 align="center">
+    VerificaCampoDuplicadoValidator
+</h2>
+
+```
+public class VerificaCampoDuplicadoValidator
+        implements ConstraintValidator<VerificaCampoDuplicado,Object> {
+
+    private String campo;
+    private Class<?> clazz;
+
+    @PersistenceContext
+    private EntityManager manager;
+
+    @Override
+    public void initialize(VerificaCampoDuplicado parameters) {
+
+        this.campo = parameters.attribute();
+        this.clazz = parameters.clazz();
+    }
+
+    @Override
+    public boolean isValid(Object objetoValidacao, ConstraintValidatorContext context) {
+
+        Query query = manager.createQuery("SELECT 1 FROM "+ clazz.getName() + " where " + campo + " =:valor");
+        query.setParameter("valor", objetoValidacao);
+
+        var resultList = query.getResultList();
+
+        return resultList.size() > 0 ? false: true;
+
+    }
+}
+```
+
