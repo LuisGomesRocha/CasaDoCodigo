@@ -207,7 +207,7 @@ public class VerificaCampoDuplicadoValidator
 ```
 
 <h1 align="center">
-    <a href="https://www.java.com/pt-BR/">🔗 Cadastro de uma categoria </a>
+    <a href="https://github.com/LuisGomesRocha/CasaDoCodigo/releases/tag/V2">🔗 Cadastro de uma categoria </a>
 </h1>
 
 <p align="center">🚀Formulário de ideia | Implementação Cadastro de uma categoria - Olá Zupper, este questionário é uma forma de entender o raciocínio que você pretende utilizar para desenvolver a funcionalidade "Cadastro de uma categoria" da casa do código.  🚀 </p>
