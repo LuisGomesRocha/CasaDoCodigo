@@ -15,38 +15,37 @@ import java.util.List;
 @RestControllerAdvice
 public class ErrosHandle {
 
-    private MessageSource messageSource;
+	private MessageSource messageSource;
 
+	public ErrosHandle(MessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
 
-    public ErrosHandle(MessageSource messageSource) {
-        this.messageSource = messageSource;
-    }
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public List<ErrosResponseDto> autorValidationError(MethodArgumentNotValidException ex) {
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public List<ErrosResponseDto> autorValidationError(MethodArgumentNotValidException ex){
+		List<ErrosResponseDto> erros = new ArrayList<>();
 
-        List<ErrosResponseDto> erros = new ArrayList<>();
+		List<FieldError> errorList = ex.getBindingResult().getFieldErrors();
 
-        List<FieldError> errorList = ex.getBindingResult().getFieldErrors();
+		errorList.forEach(e -> {
+			String message = messageSource.getMessage(e, LocaleContextHolder.getLocale());
+			erros.add(new ErrosResponseDto(e.getField(), message));
+		});
 
-        errorList.forEach(e->{
-                    String message = messageSource.getMessage(e,LocaleContextHolder.getLocale());
-                    erros.add(new ErrosResponseDto(e.getField(),message));
-                });
+		return erros;
 
-        return erros;
+	}
 
-    }
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(CategoriaOuAutorNaoEncontrado.class)
+	public ErrosResponseDto CategoriaOuAutorNaoEncontrado(CategoriaOuAutorNaoEncontrado ex) {
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(CategoriaOuAutorNaoEncontrado.class)
-    public ErrosResponseDto CategoriaOuAutorNaoEncontrado(CategoriaOuAutorNaoEncontrado ex){
+		ErrosResponseDto erro;
+		erro = new ErrosResponseDto("Categoria ID ou Autor ID", "Id(s) não encontrado!");
+		return erro;
 
-        ErrosResponseDto erro;
-        erro = new ErrosResponseDto("Categoria ID ou Autor ID", "Id(s) não encontrado!");
-        return erro;
-
-    }
+	}
 
 }

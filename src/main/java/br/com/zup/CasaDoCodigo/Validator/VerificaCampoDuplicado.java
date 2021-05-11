@@ -10,14 +10,17 @@ import static java.lang.annotation.ElementType.FIELD;
 
 @Target(FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = {VerificaCampoDuplicadoValidator.class})
+@Constraint(validatedBy = { VerificaCampoDuplicadoValidator.class })
 public @interface VerificaCampoDuplicado {
 
-    String message() default "{VerificaCampoDuplicado}";
-    Class<?>[] groups() default {};
-    Class<? extends Payload>[] payload() default {};
+	String message() default "{VerificaCampoDuplicado}";
 
-    String attribute();
-    Class<?> clazz();
+	Class<?>[] groups() default {};
+
+	Class<? extends Payload>[] payload() default {};
+
+	String attribute();
+
+	Class<?> clazz();
 
 }

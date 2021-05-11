@@ -1,18 +1,19 @@
-package br.com.zup.CasaDoCodigo.Categoria;
+package br.com.zup.CasaDoCodigo.Pais;
 
 import javax.validation.constraints.NotBlank;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import br.com.zup.CasaDoCodigo.Validator.VerificaCampoDuplicado;
 
-public class CategoriaRequest {
+public class PaisRequest {
 
 	@NotBlank
-	@VerificaCampoDuplicado(attribute = "nome", clazz = Categoria.class)
+	@VerificaCampoDuplicado(attribute = "nome", clazz = Pais.class)
 	private String nome;
 
 	@JsonCreator
-	public CategoriaRequest(@JsonProperty("nome") String nome) {
+	public PaisRequest(@JsonProperty("nome") String nome) {
 		this.nome = nome;
 	}
 
@@ -20,7 +21,7 @@ public class CategoriaRequest {
 		return nome;
 	}
 
-	public Categoria toCategoria() {
-		return new Categoria(this.nome);
+	public Pais toPais() {
+		return new Pais(this.nome);
 	}
 }

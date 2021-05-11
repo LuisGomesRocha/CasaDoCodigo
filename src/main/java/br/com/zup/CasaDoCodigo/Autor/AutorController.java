@@ -11,17 +11,17 @@ import javax.validation.Valid;
 @RequestMapping("/autores")
 public class AutorController {
 
-    private AutorRepository repository;
+	private AutorRepository repository;
 
-    public AutorController(AutorRepository repository) {
-        this.repository = repository;
-    }
+	public AutorController(AutorRepository repository) {
+		this.repository = repository;
+	}
 
-    @PostMapping
-    public void salvarAutor(@RequestBody @Valid AutorRequest autorRequest) {
+	@PostMapping
+	public void salvarAutor(@RequestBody @Valid AutorRequest autorRequest) {
 
-        repository.save(autorRequest.toAutor());
+		repository.save(autorRequest.toAutor());
 
-    }
+	}
 
 }

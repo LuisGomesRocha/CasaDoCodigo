@@ -6,33 +6,31 @@ import javax.persistence.Query;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-public class VerificaCampoDuplicadoValidator
-        implements ConstraintValidator<VerificaCampoDuplicado,Object> {
+public class VerificaCampoDuplicadoValidator implements ConstraintValidator<VerificaCampoDuplicado, Object> {
 
-    private String campo;
-    private Class<?> clazz;
+	private String campo;
+	private Class<?> clazz;
 
-    @PersistenceContext
-    private EntityManager manager;
+	@PersistenceContext
+	private EntityManager manager;
 
-    @Override
-    public void initialize(VerificaCampoDuplicado parameters) {
+	@Override
+	public void initialize(VerificaCampoDuplicado parameters) {
 
-        this.campo = parameters.attribute();
-        this.clazz = parameters.clazz();
-    }
+		this.campo = parameters.attribute();
+		this.clazz = parameters.clazz();
+	}
 
-    @Override
-    public boolean isValid(Object objetoValidacao, ConstraintValidatorContext context) {
+	@Override
+	public boolean isValid(Object objetoValidacao, ConstraintValidatorContext context) {
 
-        Query query = manager.createQuery("SELECT 1 FROM "+ clazz.getName() + " where " + campo + " =:valor");
-        query.setParameter("valor", objetoValidacao);
+		Query query = manager.createQuery("SELECT 1 FROM " + clazz.getName() + " where " + campo + " =:valor");
+		query.setParameter("valor", objetoValidacao);
 
-        var resultList = query.getResultList();
+		var resultList = query.getResultList();
 
-        return resultList.size() > 0 ? false: true;
+		return resultList.size() > 0 ? false : true;
 
-    }
-
+	}
 
 }
