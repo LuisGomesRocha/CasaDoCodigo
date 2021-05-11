@@ -228,3 +228,59 @@ Afim de atender as restrições será utilizado as anotações @Column(unique = 
 <p align="justify"> :robot: 
 Para atender os casos em que alguma restrição não seja atendida, personalizando o JSON (informando os problemas de validação), será criado duas classes denominadas CategoriaOuAutorNaoEncontrado e ErrosHandle, onde na primeira será estendido os métodos da classe RuntimeException capturando a mensagem de erro, e no segundo momento nos casos de MethodArgumentNotValidException o status de retorno será “BAD REQUEST” com uma mensagem personalizada dizendo: "Categoria ID ou Autor ID", "Id(s) não encontrado!"
 :robot: </p>
+
+<h2 align="center">
+    CategoriaOuAutorNaoEncontrado
+</h2>
+
+```
+public class CategoriaOuAutorNaoEncontrado extends RuntimeException{
+    public CategoriaOuAutorNaoEncontrado(String message) {
+        super(message);
+    }
+}
+```
+
+<h2 align="center">
+    ErrosHandle
+</h2>
+
+```
+public class ErrosHandle {
+
+    private MessageSource messageSource;
+
+
+    public ErrosHandle(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public List<ErrosResponseDto> autorValidationError(MethodArgumentNotValidException ex){
+
+        List<ErrosResponseDto> erros = new ArrayList<>();
+
+        List<FieldError> errorList = ex.getBindingResult().getFieldErrors();
+
+        errorList.forEach(e->{
+                    String message = messageSource.getMessage(e,LocaleContextHolder.getLocale());
+                    erros.add(new ErrosResponseDto(e.getField(),message));
+                });
+
+        return erros;
+
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(CategoriaOuAutorNaoEncontrado.class)
+    public ErrosResponseDto CategoriaOuAutorNaoEncontrado(CategoriaOuAutorNaoEncontrado ex){
+
+        ErrosResponseDto erro;
+        erro = new ErrosResponseDto("Categoria ID ou Autor ID", "Id(s) não encontrado!");
+        return erro;
+
+    }
+
+}
+```
