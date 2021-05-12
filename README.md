@@ -592,3 +592,9 @@ public class LivroResponse {
 - [x] o país é obrigatório (Estados)
 
 
+<p align="justify"> :robot: Para cadastrar um novo País será criado a classe País, anotado com @Entity que informar que uma classe também é uma entidade, a partir disso, a JPA estabelecerá a ligação entre a entidade e uma tabela de mesmo nome no banco de dados, onde os dados de objetos desse tipo poderão ser persistidos. Os dados existentes nessa classe será Id e nome. A classe Estados também será anotada com @Entity, porém os dados existentes nessa classe serão id e nome bem como uma relação @ManyToOne com a classe País.:robot: </p>
+	
+	
+
+
+
